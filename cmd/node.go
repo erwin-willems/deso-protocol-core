@@ -496,6 +496,7 @@ func GetAddrsToListenOn(protocolPort uint16) ([]net.TCPAddr, []net.Listener) {
 			IP:   ifaceIP,
 			Port: int(protocolPort),
 		}
+		glog.V(2).Infof("_getaddrstolistenon: Add address to listen on: %v:%v\n", netAddr.IP.String(), netAddr.Port)
 
 		listener, err := net.Listen(netAddr.Network(), netAddr.String())
 		if err != nil {
