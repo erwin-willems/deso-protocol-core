@@ -482,11 +482,14 @@ func GetAddrsToListenOn(protocolPort uint16) ([]net.TCPAddr, []net.Listener) {
 		return nil, nil
 	}
 
+	glog.V(2).Infof("_getaddrstolistenon: Get Listen addresses...\n")
+
 	for _, iAddr := range ifaceAddrs {
 		ifaceIP, _, err := net.ParseCIDR(iAddr.String())
 		if err != nil {
 			continue
 		}
+		glog.V(2).Infof("_getaddrstolistenon: Found listen address: %v:%v\n", iAddr.String())
 
 		if ifaceIP.IsLinkLocalUnicast() {
 			continue
