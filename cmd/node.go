@@ -489,9 +489,10 @@ func GetAddrsToListenOn(protocolPort uint16) ([]net.TCPAddr, []net.Listener) {
 		if err != nil {
 			continue
 		}
-		glog.Infof("_getaddrstolistenon: Found listen address: %v:%v\n", iAddr.String())
+		glog.Infof("_getaddrstolistenon: Found listen address: %v\n", iAddr.String())
 
-		if ifaceIP.IsLinkLocalUnicast() {
+		if ifaceIP.IsPrivate() || !ifaceIP.IsGlobalUnicast() {
+			glog.Infof("_getaddrstolistenon: Skip address to listen on: %v:%v\n", ifaceIP.String(), protocolPort)
 			continue
 		}
 
