@@ -456,7 +456,7 @@ func (bav *UtxoView) GetAllPosts() (_corePosts []*PostEntry, _commentsByPostHash
 	return allCorePosts, commentsByPostHash, nil
 }
 
-func (bav *UtxoView) GetPostsPaginatedForPublicKeyOrderedByTimestamp(publicKey []byte, startPostHash *BlockHash, limit uint64, mediaRequired bool, onlyNFTs bool, onlyPosts bool) (_posts []*PostEntry, _err error) {
+func (bav *UtxoView) GetPostsPaginatedForPublicKeyOrderedByTimestamp(publicKey []byte, startPostHash *BlockHash, limit uint64, mediaRequired bool, onlyNFTs bool, onlyPosts bool, onlyComments bool, includeComments bool) (_posts []*PostEntry, _err error) {
 	if onlyNFTs && onlyPosts {
 		return nil, fmt.Errorf("GetPostsPaginatedForPublicKeyOrderedByTimestamp: onlyNFTs and onlyPosts can not be enabled both")
 	}
@@ -531,7 +531,13 @@ func (bav *UtxoView) GetPostsPaginatedForPublicKeyOrderedByTimestamp(publicKey [
 				if postEntry == nil {
 					return fmt.Errorf("Missing post entry")
 				}
-				if postEntry.isDeleted || postEntry.ParentStakeID != nil || postEntry.IsHidden {
+				if postEntry.isDeleted || postEntry.IsHidden {
+					continue
+				}
+				if onlyComments && postEntry.ParentStakeID == nil {
+					continue
+				}
+				if !includeComments && postEntry.ParentStakeID != nil {
 					continue
 				}
 
